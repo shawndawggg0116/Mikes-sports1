@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+// Define the User Schema
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -23,6 +24,7 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+// Prevent OverwriteModelError by checking if the model already exists
 const User = mongoose.models.User || mongoose.model('User', userSchema);
 
 module.exports = User;
