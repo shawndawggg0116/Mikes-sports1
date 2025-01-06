@@ -1,10 +1,11 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const path = require('path');
-const mongoose = require('mongoose'); // Declare mongoose once at the top
-const adminRoutes = require('./routes/admin'); // Import the admin routes
-const User = require('./models/User'); // Import the User model
+
+const adminRoutes = require('./routes/admin');
+const User = require('./models/User');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -23,12 +24,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-// Login Page
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
-// Login API
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
@@ -50,18 +49,14 @@ app.post('/login', async (req, res) => {
     const token = jwt.sign({ id: user._id, username: user.username }, JWT_SECRET, { expiresIn: '1h' });
     res.cookie('token', token, { httpOnly: true }).redirect('/dashboard');
   } catch (error) {
-    console.error('Login Error:', error);
     res.status(500).send('Error logging in.');
   }
 });
 
-// Admin Routes
-app.use('/api/admin', adminRoutes); // Use the admin routes
+app.use('/api/admin', adminRoutes);
 
-// Dashboard (Black Screen)
 app.get('/dashboard', (req, res) => {
   res.send('<body style="background-color: black;"></body>');
 });
 
-// Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

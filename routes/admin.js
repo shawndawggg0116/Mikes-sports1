@@ -1,13 +1,11 @@
-
 const express = require('express');
 const bcrypt = require('bcrypt');
-const User = require('../models/User'); // Ensure this is the correct path
+const User = require('../models/User');
 
 const router = express.Router();
 
-// Route to create a new user (admin only)
 router.post('/add-user', async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, role } = req.body;
 
   if (!username || !password) {
     return res.status(400).json({ message: 'Username and password are required' });
@@ -15,7 +13,7 @@ router.post('/add-user', async (req, res) => {
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ username, password: hashedPassword });
+    const newUser = new User({ username, password: hashedPassword, role });
     await newUser.save();
     res.status(201).json({ message: 'User created successfully' });
   } catch (error) {
